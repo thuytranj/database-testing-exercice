@@ -81,14 +81,19 @@ chmod +x mvnw
 
 ---
 
-## 6. Lỗi DBUnit assertion failures
+## 6. Lỗi DBUnit XML và assertion failures
 
 **Triệu chứng:**
-- `AssertionFailedError` từ `org.dbunit.Assertion` khi so sánh bảng `users`.
+- `AssertionFailedError` từ `org.dbunit.Assertion` hoặc lỗi phân tích XML (`SAXParseException` / `FlatXmlDataSetBuilder`).
 
 **Cách khắc phục:**
-1. Kiểm tra xem dữ liệu bạn sinh ra trong `DataGenerationTest` có khớp với kiểu dữ liệu và độ dài cột trong bảng `users` hay không (`username` 3–20 ký tự, `email` <= 100 ký tự và không trùng lặp).
-2. Nếu bạn thay đổi logic tạo `User` trong `DataGenerationTest`, đảm bảo đối tượng truyền vào `userRepository.insert(...)` chính là đối tượng được đưa vào `generatedUsers` để dựng bảng kỳ vọng.
+1. **Task 1 & Task 2 (`initial-users.xml`, `expected-users.xml`):**
+   - Đảm bảo file XML hợp lệ (có thẻ đóng `/>` cho mỗi `<users .../>` và nằm gọn trong `<dataset>...</dataset>`).
+   - Kiểm tra tên bảng là `users` và tên các thuộc tính (`id`, `username`, `email`, `age`) viết đúng chính tả.
+   - Ở Task 2, đọc kỹ 3 thao tác CRUD trong `DBUnitExpectedStateTest.java` (xóa ai, cập nhật tuổi ai, thêm ai) để đảm bảo `expected-users.xml` phản ánh đúng trạng thái cuối cùng.
+2. **Task 3 (`DataGenerationTest`):**
+   - Kiểm tra xem dữ liệu bạn sinh ra có khớp với kiểu dữ liệu và độ dài cột trong bảng `users` hay không (`username` 3–20 ký tự, `email` <= 100 ký tự và không trùng lặp).
+   - Đảm bảo đối tượng truyền vào `userRepository.insert(...)` chính là đối tượng được đưa vào `generatedUsers` để dựng bảng kỳ vọng.
 
 ---
 
@@ -96,6 +101,6 @@ chmod +x mvnw
 
 | Loại lỗi | Dấu hiệu nhận biết | Ý nghĩa & Hành động |
 |---|---|---|
-| **1. Chưa làm TODO** | Thông báo có chữ `TODO 1.1`, `TODO 1.2`, hoặc `TODO 2.1 / 2.2` | Bạn chưa điền code/giá trị vào vị trí TODO tương ứng. Hãy hoàn thành TODO rồi chạy lại. |
-| **2. Lỗi chủ đích của bài tập (Task 2 & 3)** | `verifyRequiredBoundaryTestCasesPresent` **PASS**, chỉ có **1** test case trong `UserConstraintTest` bị `FAIL` vì database không ném `SQLException` | Đây là lỗi thực tế từ schema bị thiếu/sai ràng buộc! Hãy chụp `before_fix.png` rồi chuyển sang Task 3 & 4. |
+| **1. Chưa làm TODO** | Thông báo có chữ `TODO 1.1`, `TODO 2.1`, `TODO 3.1`, `TODO 3.2`, hoặc `TODO 4.1 / 4.2` | Bạn chưa điền XML/code/giá trị vào vị trí TODO tương ứng. Hãy hoàn thành TODO rồi chạy lại. |
+| **2. Lỗi chủ đích của bài tập (Task 4)** | `verifyRequiredBoundaryTestCasesPresent` **PASS**, chỉ có **1** test case trong `UserConstraintTest` bị `FAIL` vì database không ném `SQLException` | Đây là lỗi thực tế từ schema bị thiếu/sai ràng buộc! Hãy chụp `before_fix.png` rồi sửa `V1__create_users_table.sql`. |
 | **3. Lỗi hạ tầng (Infrastructure error)** | `SmokeTest` bị `ERROR`, `ExceptionInInitializerError`, không kết nối được Docker hoặc sai JDK | Kiểm tra lại mục 1–4 ở trên để sửa môi trường trước khi làm bài. |

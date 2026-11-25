@@ -2,7 +2,7 @@
 
 Bài thực hành cá nhân dành cho sinh viên với kiến thức cơ bản về Java, SQL và kiểm thử phần mềm.
 
-- **Thời gian hoàn thành dự kiến:** 10–15 phút (không tính thời gian cài đặt môi trường).
+- **Thời gian hoàn thành dự kiến:** 15–20 phút (không tính thời gian cài đặt môi trường và nộp bài).
 - **Hình thức:** Làm việc cá nhân.
 
 ## 1. Bối cảnh & Mục tiêu học tập
@@ -16,12 +16,13 @@ Bạn sẽ kiểm thử tầng cơ sở dữ liệu (database layer) cho hệ th
 | `email` | `VARCHAR(100)` | `NOT NULL`, `UNIQUE` |
 | `age` | Integer | `NOT NULL`, từ 18 đến 60 (bao gồm cả hai đầu mút) |
 
-Sau bài thực hành, bạn sẽ nắm được:
-- Sinh dữ liệu kiểm thử tái lập (reproducible test data) với **Datafaker** và fixed seed.
-- Thiết kế test case bằng kỹ thuật **Boundary Value Analysis (BVA)** với **JUnit 5** parameterized tests.
-- Chuẩn bị dữ liệu và đối chiếu **Expected vs. Actual** ở mức bảng cơ sở dữ liệu bằng **DBUnit**.
-- Đảm bảo **test isolation** với **Testcontainers** (PostgreSQL thật) và **Flyway**.
-- Quy trình phát hiện lỗi (bug hunting), sửa lỗi schema và chạy lại kiểm thử hồi quy (regression testing).
+Lộ trình học tập qua 4 nhiệm vụ được thiết kế theo tiến trình từ thủ công đến tự động:
+1. **Chuẩn bị dữ liệu thủ công bằng DBUnit XML:** Tự viết Flat XML Dataset (`initial-users.xml`) để nạp dữ liệu khởi tạo.
+2. **Kiểm thử trạng thái CRUD với Expected vs. Actual XML:** Đọc mã CRUD, dự đoán trạng thái cuối cùng của cơ sở dữ liệu (`expected-users.xml`) và đối chiếu tự động bằng DBUnit.
+3. **Sinh dữ liệu tự động với Datafaker & DBUnit in-memory:** Sinh dữ liệu kiểm thử tái lập (reproducible test data) bằng **Datafaker** (fixed seed) và dựng bảng kỳ vọng trong bộ nhớ.
+4. **Kiểm thử giá trị biên & Săn lỗi (BVA, Bug Hunting & Fix):** Áp dụng **Boundary Value Analysis (BVA)** với **JUnit 5**, phát hiện lỗi schema chủ đích, sửa file migration và kiểm thử hồi quy.
+
+> **Phân biệt rõ vai trò:** Bạn chuẩn bị dữ liệu đầu vào/kỳ vọng (file XML, giá trị BVA, biểu thức Datafaker), còn toàn bộ quá trình khởi tạo PostgreSQL (**Testcontainers**), chạy migration (**Flyway**), nạp dữ liệu (`CLEAN_INSERT`), thực thi truy vấn và đối chiếu (`Assertion.assertEquals`) được thực hiện tự động bởi bộ test.
 
 ## 2. Công nghệ sử dụng
 
@@ -51,31 +52,34 @@ Nếu `SmokeTest` trả về `BUILD SUCCESS`, môi trường của bạn đã s�
 ```mermaid
 flowchart LR
     A["Testcontainers<br/>(PostgreSQL)"] --> B["Flyway<br/>(Migrate Schema)"]
-    B --> C["Prepare Data<br/>(DBUnit / Datafaker)"]
-    C --> D["Execute<br/>(JDBC Insert / Query)"]
-    D --> E["JUnit / DBUnit<br/>Assertion"]
-    E --> F{"PASS / FAIL"}
-    F -- "FAIL (Task 3)" --> G["Fix & Retest<br/>(Task 4)"]
-    G --> E
-    F -- "PASS" --> H["Hoàn thành & Nộp bài"]
+    B --> C["Task 1: Seed XML<br/>(DBUnitSeedTest)"]
+    C --> D["Task 2: CRUD State<br/>(DBUnitExpectedStateTest)"]
+    D --> E["Task 3: Datafaker<br/>(DataGenerationTest)"]
+    E --> F["Task 4: BVA & Bug Hunt<br/>(UserConstraintTest)"]
+    F --> G{"./mvnw test"}
+    G -- "1 FAIL (before_fix.png)" --> H["Sửa V1__create_users_table.sql"]
+    H --> I["./mvnw test (after_fix.png)"]
+    I --> J["Tất cả PASS & Nộp bài"]
 ```
 
 ## 5. Tóm tắt 4 nhiệm vụ & Các file cần chỉnh sửa
 
-Bạn **chỉ** chỉnh sửa 3 file sau trong toàn bộ bài thực hành:
-1. [DataGenerationTest.java](src/test/java/com/example/dbtesting/DataGenerationTest.java)
-2. [UserConstraintTest.java](src/test/java/com/example/dbtesting/UserConstraintTest.java)
-3. [V1__create_users_table.sql](src/main/resources/db/migration/V1__create_users_table.sql)
+Bạn **chỉ** chỉnh sửa **5 file** sau trong toàn bộ bài thực hành:
+1. [initial-users.xml](src/test/resources/datasets/initial-users.xml)
+2. [expected-users.xml](src/test/resources/datasets/expected-users.xml)
+3. [DataGenerationTest.java](src/test/java/com/example/dbtesting/DataGenerationTest.java)
+4. [UserConstraintTest.java](src/test/java/com/example/dbtesting/UserConstraintTest.java)
+5. [V1__create_users_table.sql](src/main/resources/db/migration/V1__create_users_table.sql)
 
 | Task | Nội dung | Thời gian | Lệnh chạy kiểm tra | Kết quả mong đợi |
 |---|---|---|---|---|
-| **Task 1** | Hoàn thành `TODO 1.1` và `TODO 1.2` để sinh 10 user hợp lệ bằng Datafaker | 3 phút | `./mvnw -Dtest=DataGenerationTest test` | `PASS` |
-| **Task 2** | Hoàn thành `TODO 2.1` và `TODO 2.2` bằng kỹ thuật BVA trong `@CsvSource` | 4 phút | `./mvnw -Dtest=UserConstraintTest test` | Phát hiện **1 lỗi chủ đích** (`FAIL`) |
-| **Task 3** | Chạy toàn bộ test, phân tích Expected vs. Actual, tìm nguyên nhân trong migration và chụp `before_fix.png` | 2 phút | `./mvnw test` | `Failures: 1, Errors: 0, Skipped: 0` |
-| **Task 4** | Sửa lỗi ràng buộc trong `V1__create_users_table.sql`, chạy lại toàn bộ test và chụp `after_fix.png` | 3 phút | `./mvnw test` | Tất cả `PASS` (`Failures: 0, Errors: 0, Skipped: 0`) |
+| **Task 1** | Hoàn thành `initial-users.xml` (`TODO 1.1`) theo định dạng DBUnit Flat XML | 3 phút | `./mvnw -Dtest=DBUnitSeedTest test` | `PASS` (1/1) |
+| **Task 2** | Đọc CRUD trong `DBUnitExpectedStateTest`, dự đoán trạng thái cuối vào `expected-users.xml` (`TODO 2.1`) | 4 phút | `./mvnw -Dtest=DBUnitExpectedStateTest test` | `PASS` (1/1) |
+| **Task 3** | Hoàn thành `TODO 3.1` và `TODO 3.2` trong `DataGenerationTest` bằng Datafaker | 4 phút | `./mvnw -Dtest=DataGenerationTest test` | `PASS` (1/1) |
+| **Task 4** | Hoàn thành `TODO 4.1` và `TODO 4.2` (BVA), chạy toàn bộ suite để chụp `before_fix.png`, sửa `V1__create_users_table.sql`, chạy lại và chụp `after_fix.png` | 6 phút | `./mvnw test` | Trước sửa: `Failures: 1`<br/>Sau sửa: `Failures: 0, Errors: 0, Skipped: 0` (13/13) |
 
 **Tiến trình kết quả chuẩn:**
-`Môi trường sẵn sàng (SmokeTest PASS)` → `Task 1 PASS` → `Task 2 có đúng 1 lỗi chủ đích` → `Task 4 tất cả PASS`.
+`SmokeTest PASS` → `Task 1 PASS` → `Task 2 PASS` → `Task 3 PASS` → `Task 4 có đúng 1 lỗi chủ đích (before_fix.png)` → `Sửa SQL & tất cả 13 tests PASS (after_fix.png)`.
 
 Hướng dẫn từng bước chi tiết xem tại [docs/EXERCISE.md](docs/EXERCISE.md).
 
@@ -83,11 +87,13 @@ Hướng dẫn từng bước chi tiết xem tại [docs/EXERCISE.md](docs/EXERC
 
 Thư mục mẫu nằm tại `submit/MSSV/`. Sau khi hoàn thành bài thực hành:
 1. Đổi tên thư mục `MSSV` thành mã số sinh viên của bạn.
-2. Chuẩn bị **đúng 6 file** trong thư mục `<MSSV>/`:
+2. Chuẩn bị **đúng 8 file** trong thư mục `<MSSV>/`:
+   - `initial-users.xml` (copy từ `src/test/resources/datasets/`)
+   - `expected-users.xml` (copy từ `src/test/resources/datasets/`)
    - `DataGenerationTest.java` (copy từ `src/test/java/com/example/dbtesting/`)
    - `UserConstraintTest.java` (copy từ `src/test/java/com/example/dbtesting/`)
    - `V1__create_users_table.sql` (copy từ `src/main/resources/db/migration/`)
-   - `before_fix.png` (ảnh chụp màn hình kết quả FAIL ở Task 3)
+   - `before_fix.png` (ảnh chụp màn hình kết quả FAIL ở Task 4)
    - `after_fix.png` (ảnh chụp màn hình kết quả PASS toàn bộ ở Task 4)
    - `REPORT.md` (điền đầy đủ thông tin và câu trả lời)
 3. Nén thư mục `<MSSV>/` thành `<MSSV>.zip` để nộp. **Không** nộp toàn bộ project, `target/`, hay thư viện phụ thuộc.
@@ -95,5 +101,5 @@ Thư mục mẫu nằm tại `submit/MSSV/`. Sau khi hoàn thành bài thực h�
 ## 7. Tài liệu tham khảo
 
 - [docs/SETUP.md](docs/SETUP.md) – Hướng dẫn cài đặt môi trường (macOS / Windows / Linux).
-- [docs/EXERCISE.md](docs/EXERCISE.md) – Hướng dẫn chi tiết 4 tasks, API tham khảo, gợi ý và câu hỏi thảo luận.
+- [docs/EXERCISE.md](docs/EXERCISE.md) – Hướng dẫn chi tiết 4 tasks, ví dụ Flat XML, API tham khảo và gợi ý.
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) – Xử lý các lỗi thường gặp về Java, Docker, Maven, Flyway, JDBC và DBUnit.
