@@ -1,0 +1,9 @@
+target/
+.solution/
+.idea/
+.vscode/
+target/
+.solution/
+.idea/
+.vscode/
+.DS_Store
