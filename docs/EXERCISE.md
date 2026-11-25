@@ -160,12 +160,3 @@ Sửa lỗi ràng buộc trong schema và chạy kiểm thử hồi quy (regress
 - [ ] File `<MSSV>.zip` chỉ chứa 6 file theo đúng cấu trúc yêu cầu.
 
 ---
-
-## Câu hỏi thảo luận sau bài thực hành (Không bắt buộc code thêm)
-
-1. Tại sao dữ liệu sinh ngẫu nhiên hợp lệ (như trong Task 1) không đủ để phát hiện lỗi ràng buộc nghiệp vụ của cơ sở dữ liệu?
-2. Tại sao kiểm thử giá trị biên (Boundary Value Analysis) lại đặc biệt hiệu quả khi kiểm thử các ràng buộc `CHECK` trong SQL?
-3. Việc cố định seed (ví dụ `42L`) cho Datafaker mang lại lợi ích gì trong quá trình phát triển và CI/CD?
-4. Sự khác biệt về vai trò giữa **Datafaker** và **DBUnit** trong bài thực hành này là gì?
-5. Tại sao cần reset dữ liệu (`TRUNCATE ... RESTART IDENTITY`) trước mỗi test case hoặc mỗi lượt chạy `@ParameterizedTest`? Điều gì sẽ xảy ra nếu không làm vậy?
-6. Testcontainers giải quyết được vấn đề gì so với việc dùng chung một PostgreSQL cài sẵn trên máy hoặc dùng database giả lập (như H2 in-memory)?
