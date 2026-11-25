@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Task 2: Verify database constraints using JUnit 5 parameterized tests and Boundary Value Analysis (BVA).
+ * Task 4: Verify database constraints using JUnit 5 parameterized tests and Boundary Value Analysis (BVA).
  */
 class UserConstraintTest extends BaseDatabaseTest {
 
@@ -41,8 +41,8 @@ class UserConstraintTest extends BaseDatabaseTest {
     @ParameterizedTest(name = "{0}: age={1}, email={2} -> {3}")
     @CsvSource({
             "TC01, 25, tc01@example.com, ACCEPT",
-            // TODO 2.1: Determine boundary inputs using Boundary Value Analysis (BVA) and replace -1
-            // TODO 2.2: Specify expected outcomes (ACCEPT or REJECT) and replace TODO
+            // TODO 4.1: Determine boundary inputs using Boundary Value Analysis (BVA) and replace -1
+            // TODO 4.2: Specify expected outcomes (ACCEPT or REJECT) and replace TODO
             "TC02, -1, tc02@example.com, TODO",
             "TC03, -1, tc03@example.com, TODO",
             "TC04, -1, tc04@example.com, TODO",
@@ -53,7 +53,7 @@ class UserConstraintTest extends BaseDatabaseTest {
     void shouldEnforceUserConstraints(String testId, int age, String rawEmail, String expectedOutcome)
             throws Exception {
         if (age < 0 || "TODO".equalsIgnoreCase(expectedOutcome)) {
-            fail(testId + ": TODO 2.1 / 2.2 not completed. Replace placeholder age and outcome in @CsvSource.");
+            fail(testId + ": TODO 4.1 / 4.2 not completed. Replace placeholder age and outcome in @CsvSource.");
         }
 
         String email = "NULL".equalsIgnoreCase(rawEmail) ? null : rawEmail;
@@ -116,7 +116,7 @@ class UserConstraintTest extends BaseDatabaseTest {
             if (targetIds.contains(id)) {
                 int parsedAge = Integer.parseInt(ageStr);
                 if (parsedAge < 0 || "TODO".equals(outcome)) {
-                    fail("TODO 2.1 / 2.2: Complete all boundary value test cases (TC02-TC05) in @CsvSource.");
+                    fail("TODO 4.1 / 4.2: Complete all boundary value test cases (TC02-TC05) in @CsvSource.");
                 }
                 bvaEntries.add(parsedAge + ":" + outcome);
             }
