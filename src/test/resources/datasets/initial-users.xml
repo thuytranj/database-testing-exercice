@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <!--
+      TODO 1.1: Khai báo 3 dòng <users .../> theo đúng thứ tự và dữ liệu yêu cầu của Task 1:
+        - id=1, username=alice, email=alice@example.com, age=20
+        - id=2, username=bob, email=bob@example.com, age=25
+        - id=3, username=charlie, email=charlie@example.com, age=30
+
+      Gợi ý Flat XML:
+        <users id="..." username="..." email="..." age="..."/>
+    -->
+</dataset>

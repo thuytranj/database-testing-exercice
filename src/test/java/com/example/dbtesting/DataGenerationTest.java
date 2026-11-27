@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Task 1: Generate 10 reproducible, valid users with Datafaker and verify persistence with DBUnit.
+ * Task 3: Generate 10 reproducible, valid users with Datafaker and verify persistence with DBUnit.
  */
 class DataGenerationTest extends BaseDatabaseTest {
 
@@ -37,16 +37,16 @@ class DataGenerationTest extends BaseDatabaseTest {
         for (int i = 0; i < USER_COUNT; i++) {
             String username = generateValidUsername(faker, i);
 
-            // TODO 1.1: Generate a unique email address using Datafaker (hint: combine iteration index with faker.internet().emailAddress())
+            // TODO 3.1: Generate a unique email address using Datafaker (hint: combine iteration index with faker.internet().emailAddress())
             String email = null;
             if (email == null) {
-                fail("TODO 1.1: Generate unique email addresses using Datafaker.");
+                fail("TODO 3.1: Generate unique email addresses using Datafaker.");
             }
 
-            // TODO 1.2: Generate a valid age within the business range using Datafaker (hint: faker.number().numberBetween(minInclusive, maxExclusive))
+            // TODO 3.2: Generate a valid age within the business range using Datafaker (hint: faker.number().numberBetween(minInclusive, maxExclusive))
             int age = -1;
             if (age < 0) {
-                fail("TODO 1.2: Generate ages within the valid business range using Datafaker.");
+                fail("TODO 3.2: Generate ages within the valid business range using Datafaker.");
             }
 
             User user = new User(username, email, age);

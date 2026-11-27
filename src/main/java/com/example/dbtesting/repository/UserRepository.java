@@ -91,6 +91,37 @@ public class UserRepository {
         return users;
     }
 
+    /**
+     * Updates a user's age by email address.
+     *
+     * @return {@code true} if a row was updated, {@code false} otherwise
+     */
+    public boolean updateAgeByEmail(String email, int newAge) throws SQLException {
+        String sql = "UPDATE users SET age = ? WHERE email = ?";
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, newAge);
+            statement.setString(2, email);
+            return statement.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Deletes a user by email address.
+     *
+     * @return {@code true} if a row was deleted, {@code false} otherwise
+     */
+    public boolean deleteByEmail(String email) throws SQLException {
+        String sql = "DELETE FROM users WHERE email = ?";
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, email);
+            return statement.executeUpdate() > 0;
+        }
+    }
+
     private User mapRow(ResultSet resultSet) throws SQLException {
         return new User(
                 resultSet.getInt("id"),

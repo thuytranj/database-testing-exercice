@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <!--
+      TODO 2.1: Đọc kỹ các thao tác CRUD trong DBUnitExpectedStateTest.java,
+      dự đoán trạng thái cuối cùng của bảng users và khai báo các dòng <users .../> tương ứng tại đây.
+
+      Lưu ý:
+        - Thứ tự các dòng trong XML không bắt buộc (test sẽ sắp xếp theo cột email trước khi so sánh).
+        - Có thể khai báo hoặc bỏ qua thuộc tính id (test loại trừ cột id khi đối chiếu).
+    -->
+</dataset>
